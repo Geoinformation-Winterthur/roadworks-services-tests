@@ -30,7 +30,7 @@ public class RoadWorkNeedControllerTests
         mockedConfiguration.minAreaSize = 10;
         mockedConfiguration.maxAreaSize = 100000;
 
-        RoadWorkNeedDAO roadWorkNeedDAO = new RoadWorkNeedDAO(isDryRun);
+        RoadWorkNeedDAO roadWorkNeedDAO = new(isDryRun);
         RoadWorkNeedFeature roadWorkNeedResult = roadWorkNeedDAO.Insert(mockedRoadWorkNeedFeature, mockedConfiguration);
 
         Assert.NotNull(roadWorkNeedResult);
@@ -39,27 +39,26 @@ public class RoadWorkNeedControllerTests
             // result should be SSP-25 error since the
             // roadwork need object is complete
             // but the isDryRun attribute is set to true:
-            Assert.Equal(roadWorkNeedResult.errorMessage, "SSP-25");
+            Assert.Equal("SSP-25", roadWorkNeedResult.errorMessage);
         }
 
     }
 
     [Fact]
-    public void AddNeedsShouldThrowErrorWhenRoadWorkNeedIsEmpty()
+    public void InsertNeedShouldThrowErrorWhenRoadWorkNeedIsEmpty()
     {
         Mock configurationMock = new Mock<ConfigurationData>();
         ConfigurationData mockedConfiguration = (ConfigurationData)configurationMock.Object;
 
-        RoadWorkNeedDAO roadWorkNeedDAO = new RoadWorkNeedDAO(isDryRun);
+        RoadWorkNeedDAO roadWorkNeedDAO = new(isDryRun);
         RoadWorkNeedFeature roadWorkNeedResult = roadWorkNeedDAO.Insert(null, mockedConfiguration);
 
         Assert.NotNull(roadWorkNeedResult);
-        if (roadWorkNeedResult != null)
-        {
-            // result should be SSP-22 error since the
-            // roadwork need is null:
-            Assert.Equal(roadWorkNeedResult.errorMessage, "SSP-22");
-        }
+        Assert.NotNull(roadWorkNeedResult.errorMessage);
+        
+        // result should be SSP-22 error since the
+        // roadwork need is null:
+        Assert.Equal("SSP-22", roadWorkNeedResult.errorMessage);
 
         Mock roadWorkNeedFeatureMock = new Mock<RoadWorkNeedFeature>();
         RoadWorkNeedFeature mockedRoadWorkNeedFeature = (RoadWorkNeedFeature)roadWorkNeedFeatureMock.Object;
@@ -71,7 +70,7 @@ public class RoadWorkNeedControllerTests
         {
             // result should be SSP-23 error since the
             // roadwork need description is mandatory:
-            Assert.Equal(roadWorkNeedResult.errorMessage, "SSP-23");
+            Assert.Equal("SSP-23", roadWorkNeedResult.errorMessage);
         }
 
     }
